@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  smart-campus:
+  - apiVersion: v2
+    appVersion: "0131_40"
+    created: "2021-03-14T14:57:13.29613787+08:00"
+    description: A Helm chart for Kubernetes
+    digest: b3a4ad64803e1585a479180f07339fd48e46e37f438e324277d5654a8bcb5806
+    name: smart-campus
+    type: application
+    urls:
+    - https://github.com/Joshua-An/helm-chart/smart-campus-0.1.1.tgz
+    version: 0.1.1
+generated: "2021-03-14T14:57:13.295739981+08:00"
