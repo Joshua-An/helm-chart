@@ -1,0 +1,58 @@
+# Default values for smart-campus.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# deployment args
+
+metadata:
+  namespace: default
+
+fullnameOverride: smart-campus
+nameOverride: smart-campus
+
+replicaCount: 1
+
+spec:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  restartPolicy: Always
+
+image:
+  repository: reg.docker.alibaba-inc.com/mind-gatekeeper/smart-campus
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0131_40"
+
+securityContext:
+  privileged: true
+
+containerPort: 7001
+
+env:
+  CUDA_VISIBLE_DEVICES: '0'
+  DAMO_IN_DIR: '/home/admin/aibox/video'
+  DAMO_OUT_DIR: '/home/admin/aibox/video'
+  center_node_control_switch: 'true'
+  train_face_switch: 'true'
+  mysql_host: 'mysql'
+  mysql_port: '3306'
+
+command: /home/admin/start_nohup.sh
+
+volumeMounts:
+  smart-campus-claim0: /home/admin/aibox
+  smart-campus-claim1: /home/admin/vts
+  smart-campus-claim2: /home/admin/aibox/cron
+  smart-campus-claim3: /host/proc
+  smart-campus-claim4: /etc/sysconfig/network-scripts
+
+volumes:
+  smart-campus-claim0: /home/admin/aibox
+  smart-campus-claim1: /home/admin/vts
+  smart-campus-claim2: /var/spool/cron
+  smart-campus-claim3: /proc
+  smart-campus-claim4: /etc/sysconfig/network-scripts
+
+nodeSelector:
+  nodeSelector:
+  node_type: master

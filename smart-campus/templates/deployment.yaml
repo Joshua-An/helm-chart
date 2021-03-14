@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aibox-{{ include "smart-campus.fullname" . }}
+  labels:
+    {{- include "smart-campus.labels" . | nindent 4 }}
+  namespace: {{ .Values.metadata.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "smart-campus.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      name: aibox-{{ .Chart.Name }}
+      labels:
+        {{- include "smart-campus.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: {{ .Values.spec.restartPolicy }}
+      hostNetwork: {{ .Values.spec.hostNetwork }}
+      dnsPolicy: {{ .Values.spec.dnsPolicy }}
+      containers:
+        - name: aibox-{{ .Chart.Name }}-7001
+          securityContext:
+            privileged: {{ .Values.securityContext.privileged }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          env:
+            {{- range $key, $val := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+             
+          command:
+            - {{ .Values.command }}
+
+          volumeMounts:
+            {{- range $key, $val := .Values.volumeMounts }}
+            - mountPath: {{ $val }}
+              name: {{ $key }}
+            {{- end }}
+
+      volumes:
+        {{- range $key, $val := .Values.volumes }}
+        - name: {{ $key }}
+          hostPath:
+            path: {{ $val }}
+        {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        node_type: {{ .node_type }}
+      {{- end }}
+
